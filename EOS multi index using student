@@ -1,0 +1,63 @@
+#include<eosiolib/eosio.hpp>
+#include<eosiolib/print.hpp>
+
+using namespace eosio;
+class student : public eosio::contract
+{
+public:
+        using contract::contract;
+        struct students
+        {
+                uint64_t name;
+                uint64_t id;
+                uint64_t  sec;
+                uint64_t addrs;
+                account_name user;
+
+//auto primary_key()const {return id; }
+//uint64_t get_addrs()const {return addrs; }
+uint64_t primary_key() const {return user;}
+EOSLIB_SERIALIZE(students,(name)(id)(sec)(addrs)(user));
+
+};
+typedef multi_index<N(students),students> samp_struct;
+
+
+void stdt(account_name user)
+        {
+            samp_struct samples(_self,_self);
+
+            uint64_t temp = 60;
+            auto i=samples.find(user);
+            if(i==samples.end())
+                {
+                print("need insert\t");
+
+                samples.emplace(_self,[&](auto& sample)
+                {
+                
+                sample.name = user;
+                    sample.id = user;
+                    sample.sec = temp++;
+                    sample.addrs= temp++;
+                });
+            }
+            else
+            {
+                print("data already exist\t");
+            }
+
+print("hi, everyone : ", name{user}, " 6");
+        }
+};
+EOSIO_ABI(student,(stdt))
+
+
+
+
+
+
+
+
+                
+
